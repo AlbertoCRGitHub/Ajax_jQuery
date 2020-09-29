@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Satisfy&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css" />
+    
+    <style> 
+        li input {
+            margin:13px 9px 0;
+        }
+
+    </style>
+    
+    <title>TODO list Alert et animation</title>
+  </head>
+
+  <body class="container">
+    
+        <div id="template-alert" class="alert alert-success alert-dismissible fade show" role="alert" style="display : none"  >
+            <p class="alert-text"></p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+    <div class="container, mx-auto" style="width: 300px;  padding-top: 120px" >
+        <h1 class="fontsatisf display-4" >TODO list</h1>
+    </div>
+
+    <div class="container" id="section-alert"></div>
+
+    <div id="cuerpo" class="container row " >
+        <div class="col-sm bg-light ">
+            <div >
+                <h1 class="fontsatisf display-5 mt-5 mb-5">Tâches à faire</h1>   
+            </div>
+            <div class="container text-mute ">
+                <div >
+                        <label for="taches">Tâches:</label><br>
+                        <input type="text" id="taches" name="taches" value="" autofocus><br><br>
+                        <input id="buttonSubmit" type="submit" value="Submit"  >
+                        <!-- <input id="buttonEffacer" type="button" value="Effacer tâche"  >
+                        <input id="buttonModifier" type="button" value="Modifier tâche"  > -->
+                        <input id="buttonComplet" type="button" value="Tâche terminée"  >
+                        <!--<p>Cliquez sur le bouton pour ajouter une tâche</p>-->
+                </div>
+            </div><br/><br/> 
+                
+        </div>
+        <div class="col-sm  bg-light   ">
+            <div>
+                <h1 class="fontsatisf display-5  mt-5 mb-5">Liste de tâches</h1>  
+            </div>
+            
+            <div id="liste" class="liste"  >
+                <ol id="listeOl">
+                    <!--  <li class="chaqueTodo"><input type="checkbox" />prueba <input class="btnEff" type="button" value="Effacer" ><input class="btnModif" type="button" value="Modifier"  ></li> -->
+                </ol><br/><br/>
+            </div>
+        </div>    
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+ 
+    <script type="text/javascript">
+
+        function BTNsubmit() {
+            
+                let newTache = $('#taches').val(); 
+                let lichek =$('<li><input type="checkbox" />'+ newTache +'</li>');
+                lichek.addClass('chaqueTodo animate__animated animate__backInLeft');
+                
+                let btDlt = $('<input class="btnEff" type="button" value="Effacer">');
+                btDlt.click(BTNeffacer);
+                lichek.append(btDlt);
+
+                let btEff = $('<input class="btnModif" type="button" value="Modifier"  >');
+                btEff.click(BTNModif) ;
+                lichek.append(btEff);
+
+                $('.liste ol').append(lichek); 
+                $("#taches").val("");     
+        };
+        
+         function BTNeffacer() {
+           $(this).parent().addClass('animate__animated animate__hinge'); 
+           $(this).parent().on('animationend' , function() {
+            $(this).remove();
+
+            
+
+
+           });   
+         }
+
+         function BTNModif () {
+            let textAmodif = $(this).parents('li').text();
+            $("#taches").val(textAmodif);
+            $(this).parents().remove('li');
+            
+         }
+
+         function alertar(txt) {
+             let cloneAlert = $('#template-alert').clone();
+             cloneAlert.attr('id', "");
+             let alertText = cloneAlert.find('.alert-text');
+             alertText.text("Nous avons terminé avec succès la tâche suivante: " + txt);
+            $('#section-alert').append(cloneAlert);
+            cloneAlert.show();
+         } 
+
+        $(document).ready(function(){
+
+           $('#buttonSubmit').click(BTNsubmit);
+           $(".btnEff").click(BTNeffacer)
+           $("#buttonComplet").click(function() {
+                $('input[type=checkbox]').each(function () {
+                    if (this.checked){
+                        $(this).parents('li').css("color", "green");
+                        $(this).prop( "checked", false );
+                        let txt = $(this).parent().text(); 
+                        alertar(txt);
+                    };
+                });
+            });
+        });   
+    </script>
+</body>
+</html>

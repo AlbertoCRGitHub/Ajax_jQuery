@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>
+
+    </style>
+
+    <title>02</title>
+
+  </head>
+  <body>
+
+
+    <div class="container">
+      <br/>
+      <div class="row">
+          <p id="AppStatus"></p>
+      </div>
+
+
+     
+          <div class="form-group mx-sm-3 mb-2">
+
+            <input type="text" class="form-control" id="inputAuthor"  name="Author">            
+         <!--  <input type="text" class="form-control" id="inputAuthor"  name="Author" placeholder="Author"> -->
+         
+          </div>
+          <button type="submit" class="btn btn-primary mb-2" id="buttonRecherche">Recherche</button>
+      
+    </div>
+
+    
+
+    <div class="container" id="monApp">
+        <ul class="list-group" id="MaListe">
+         
+          <!-- aqui vienen mis li nuevos con los datos de los libros  template-livre class="list-group-item"-->
+
+        </ul>
+     
+    </div>
+  
+    <li class="list-group-item" id="template-livre" style="display: none">
+      <img class="livre-image" src="" />
+      <span class="livre-titre"></span>
+    </li>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js"  crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+//console.log('llegue aqu1');
+
+      function successObtenirLivre(data, status){
+//console.log(data);
+        for( var element in data){
+          let image = $('#livre-'+element).find('.livre-image');
+          image.attr('src' , data[element].thumbnail_url );
+        }
+
+      }
+
+      function obtenirLivreDetail(isbn) {
+
+        $.ajax({
+          url: "http://openlibrary.org/api/books?bibkeys="+isbn+"&format=json" ,
+          type: 'GET',
+          success: successObtenirLivre ,
+        });
+ 
+      }
+
+
+     function successAjax(data, status){
+      $(data.docs).each(function(position, livre){
+        
+        if (livre.isbn){
+          let titulo = livre.title;
+          let liNuevo = $('#template-livre').clone();
+          liNuevo.attr('id', "livre-"+livre.isbn[0] );
+          liNuevo.find('.livre-titre').text(titulo);
+          $('#MaListe').append(liNuevo);
+          //console.log(livre.isbn[0]);
+          obtenirLivreDetail(livre.isbn[0]);
+
+          liNuevo.show();   
+        }
+      });
+    }   
+
+    $(document).ready(function(){
+      //http://openlibrary.org/api/books?bibkeys=ISBN:0201558025
+      //obtenirLivreDetail(9788439596202);
+
+      $('.btn').click(function(){
+        let valorTecleado = $('#inputAuthor').val();
+        $('#MaListe').empty();
+
+        $.ajax({
+            url: "http://openlibrary.org/search.json?q="+valorTecleado,
+            type: 'GET',
+            success : successAjax ,
+
+        });  
+      }); 
+
+
+    });
+ 
+
+
+    </script>
+
+  </body>
+</html>
